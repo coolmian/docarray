@@ -1,7 +1,9 @@
-from typing import TYPE_CHECKING, Any, Type, TypeVar, Union, cast
+from typing import TYPE_CHECKING, Any, Optional, Type, TypeVar, Union, cast
 
 import numpy as np
 import torch  # type: ignore
+
+from docarray.typing.abstract_typing import AbstractTyping
 
 if TYPE_CHECKING:
     from pydantic.fields import ModelField
@@ -21,7 +23,7 @@ class metaTorchAndNode(torch_base, node_base):
     pass
 
 
-class TorchTensor(torch.Tensor, BaseNode, metaclass=metaTorchAndNode):
+class TorchTensor(AbstractTyping, torch.Tensor, BaseNode, metaclass=metaTorchAndNode):
     # Subclassing torch.Tensor following the advice from here:
     # https://pytorch.org/docs/stable/notes/extending.html#subclassing-torch-tensor
     @classmethod
@@ -34,9 +36,9 @@ class TorchTensor(torch.Tensor, BaseNode, metaclass=metaTorchAndNode):
     @classmethod
     def validate(
         cls: Type[T],
-        value: Union[T, np.ndarray, Any],
-        field: 'ModelField',
-        config: 'BaseConfig',
+        value: Union[Any, Any, Any],
+        field: Optional['ModelField'] = None,
+        config: Optional['BaseConfig'] = None,
     ) -> T:
         if isinstance(value, TorchTensor):
             return cast(T, value)

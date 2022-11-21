@@ -1,6 +1,8 @@
-from typing import TYPE_CHECKING, Any, Type, TypeVar, Union, cast
+from typing import TYPE_CHECKING, Any, Optional, Type, TypeVar, Union, cast
 
 import numpy as np
+
+from docarray.typing.abstract_typing import AbstractTyping
 
 if TYPE_CHECKING:
     from pydantic.fields import ModelField
@@ -12,7 +14,7 @@ from docarray.proto import NdArrayProto, NodeProto
 T = TypeVar('T', bound='Tensor')
 
 
-class Tensor(np.ndarray, BaseNode):
+class Tensor(np.ndarray, BaseNode, AbstractTyping):
     @classmethod
     def __get_validators__(cls):
         # one or more validators may be yielded which will be called in the
@@ -22,7 +24,10 @@ class Tensor(np.ndarray, BaseNode):
 
     @classmethod
     def validate(
-        cls: Type[T], value: Union[T, Any], field: 'ModelField', config: 'BaseConfig'
+        cls: Type[T],
+        value: Union[Any, Any, Any],
+        field: Optional['ModelField'] = None,
+        config: Optional['BaseConfig'] = None,
     ) -> T:
         if isinstance(value, np.ndarray):
             return cls.from_ndarray(value)

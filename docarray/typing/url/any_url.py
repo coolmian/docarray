@@ -1,18 +1,21 @@
-from typing import TYPE_CHECKING, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Optional, Type, TypeVar, Union
 
 from pydantic import AnyUrl as BaseAnyUrl
 from pydantic import errors, parse_obj_as
 
 from docarray.document.base_node import BaseNode
 from docarray.proto import NodeProto
+from docarray.typing.abstract_typing import AbstractTyping
 
 if TYPE_CHECKING:
+    from pydantic import BaseConfig
+    from pydantic.fields import ModelField
     from pydantic.networks import Parts
 
 T = TypeVar('T', bound='AnyUrl')
 
 
-class AnyUrl(BaseAnyUrl, BaseNode):
+class AnyUrl(BaseAnyUrl, BaseNode, AbstractTyping):
     host_required = (
         False  # turn off host requirement to allow passing of local paths as URL
     )
@@ -25,6 +28,15 @@ class AnyUrl(BaseAnyUrl, BaseNode):
         :return: the nested item protobuf message
         """
         return NodeProto(any_url=str(self))
+
+    @classmethod
+    def validate(
+        cls: Type[T],
+        value: Union[Any, Any, Any],
+        field: Optional['ModelField'] = None,
+        config: Optional['BaseConfig'] = None,
+    ) -> T:
+        return super().validate(value, field, config)
 
     @classmethod
     def validate_parts(cls, parts: 'Parts', validate_port: bool = True) -> 'Parts':

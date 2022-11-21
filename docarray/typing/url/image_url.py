@@ -36,9 +36,9 @@ class ImageUrl(AnyUrl):
     @classmethod
     def validate(
         cls: Type[T],
-        value: Union[T, np.ndarray, Any],
-        field: 'ModelField',
-        config: 'BaseConfig',
+        value: Union[Any, Any, Any],
+        field: Optional['ModelField'] = None,
+        config: Optional['BaseConfig'] = None,
     ) -> T:
 
         url = super().validate(value, field, config)  # basic url validation
