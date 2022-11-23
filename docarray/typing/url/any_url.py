@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Optional, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Optional, Type, TypeVar, Union, cast
 
 from pydantic import AnyUrl as BaseAnyUrl
 from pydantic import errors, parse_obj_as
@@ -36,7 +36,9 @@ class AnyUrl(BaseAnyUrl, BaseNode, AbstractTyping):
         field: Optional['ModelField'] = None,
         config: Optional['BaseConfig'] = None,
     ) -> T:
-        return super().validate(value, field, config)
+        return super().validate(
+            value, cast(ModelField, field), cast(BaseConfig, config)
+        )
 
     @classmethod
     def validate_parts(cls, parts: 'Parts', validate_port: bool = True) -> 'Parts':
